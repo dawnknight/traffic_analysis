@@ -45,15 +45,11 @@ plot([119,119],[0,500],color='black',lw=2)
 pylab.ylim([0,500])
 pylab.xlim([110,163])
 
-plt.text(142,400, 'vehicle region',color = '#0000FF',fontsize = 12)
-plt.text(142,415, 'traffic light region 1',color = '#006600',fontsize = 12)
-plt.text(142,430, 'traffic light region 2',color = '#990000',fontsize = 12)
+plt.text(145,405, 'vehicle region',color = '#0000FF',fontsize = 12)
+plt.text(145,420, 'traffic light region 1',color = '#006600',fontsize = 12)
+plt.text(145,435, 'traffic light region 2',color = '#990000',fontsize = 12)
 
 ticks = np.arange(0, len(imlist), len(imlist)/23)
 labels = range(ticks.size)
 plt.xticks(ticks[16:], labels[16:])
 
-#savepath = os.environ['DST_WRITE']
-#name= 'traffic.png'
-#plt.savefig(os.path.join(savepath,name),clobber=True) 
-#plt.close() 
