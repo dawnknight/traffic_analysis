@@ -15,13 +15,13 @@ import pickle
 multi=False
 # -- utilities
 bord  = 20
-nside = 401 # npix/side of a postage stamp
-reg   = (0, 0, 400, 400) # (ul row, ul col, lr row, lr col)
+nside = 121 # npix/side of a postage stamp
+reg   = (80, 80, 200, 200) # (ul row, ul col, lr row, lr col)
 
 
 # -- set the reference frame (registering off of the green image)
-rpath = 'D:/dropbox/CUSP/resize'
-rfile ='D:/dropbox/CUSP/resize/0537.png' 
+rpath = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/'
+rfile = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/0537.png' 
 im = np.array(Image.open(rfile).convert('L')).astype(np.float)
 ref   = 1.0*im[reg[0]:reg[2],reg[1]:reg[3]]
 ref  -= ref.mean()
