@@ -43,32 +43,30 @@ for i in range(len(imlist)-dt):
 #        L2_cut = diff[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0]]
 #        car_cut =diff[car[0][1]:car[1][1],car[0][0]:car[1][0]]
 #        ped_cut =diff[ped[0][1]:ped[1][1],ped[0][0]:ped[1][0]]
-      if sft[i+dt][1]>100 :
-         sft[i+dt][1] =0 
+     
       
-      
-      L1_cut = im1[L1[0][1]-sft[i+dt][0]:L1[1][1]-sft[i+dt][0],L1[0][0]-sft[i+dt][1]:L1[1][0]-sft[i+dt][1]]-\
-               im2[L1[0][1]-sft[i][0]:L1[1][1]-sft[i][0],L1[0][0]-sft[i][1]:L1[1][0]-sft[i][1]]
-      L2_cut = im1[L2[0][1]-sft[i+dt][0]:L2[1][1]-sft[i+dt][0],L2[0][0]-sft[i+dt][1]:L2[1][0]-sft[i+dt][1]]-\
-               im2[L2[0][1]-sft[i][0]:L2[1][1]-sft[i][0],L2[0][0]-sft[i][1]:L2[1][0]-sft[i][1]] 
-      car_cut = im1[car[0][1]-sft[i+dt][0]:car[1][1]-sft[i+dt][0],car[0][0]-sft[i+dt][1]:car[1][0]-sft[i+dt][1]]-\
-               im2[car[0][1]-sft[i][0]:car[1][1]-sft[i][0],car[0][0]-sft[i][1]:car[1][0]-sft[i][1]]
-      ped_cut = im1[ped[0][1]-sft[i+dt][0]:ped[1][1]-sft[i+dt][0],ped[0][0]-sft[i+dt][1]:ped[1][0]-sft[i+dt][1]]-\
-               im2[ped[0][1]-sft[i][0]:ped[1][1]-sft[i][0],ped[0][0]-sft[i][1]:ped[1][0]-sft[i][1]] 
-#      L1_cut = im1[L1[0][1]+sft[i+dt][0]:L1[1][1]+sft[i+dt][0],L1[0][0]+sft[i+dt][1]:L1[1][0]+sft[i+dt][1]]-\
-#               im2[L1[0][1]+sft[i][0]:L1[1][1]+sft[i][0],L1[0][0]+sft[i][1]:L1[1][0]+sft[i][1]]
-#      L2_cut = im1[L2[0][1]+sft[i+dt][0]:L2[1][1]+sft[i+dt][0],L2[0][0]+sft[i+dt][1]:L2[1][0]+sft[i+dt][1]]-\
-#               im2[L2[0][1]+sft[i][0]:L2[1][1]+sft[i][0],L2[0][0]+sft[i][1]:L2[1][0]+sft[i][1]] 
-#      car_cut = im1[car[0][1]+sft[i+dt][0]:car[1][1]+sft[i+dt][0],car[0][0]+sft[i+dt][1]:car[1][0]+sft[i+dt][1]]-\
-#               im2[car[0][1]+sft[i][0]:car[1][1]+sft[i][0],car[0][0]+sft[i][1]:car[1][0]+sft[i][1]]
-#      ped_cut = im1[ped[0][1]+sft[i+dt][0]:ped[1][1]+sft[i+dt][0],ped[0][0]+sft[i+dt][1]:ped[1][0]+sft[i+dt][1]]-\
-#               im2[ped[0][1]+sft[i][0]:ped[1][1]+sft[i][0],ped[0][0]+sft[i][1]:ped[1][0]+sft[i][1]]
+#      L1_cut = im1[L1[0][1]-sft[i+dt][0]:L1[1][1]-sft[i+dt][0],L1[0][0]-sft[i+dt][1]:L1[1][0]-sft[i+dt][1]]-\
+#               im2[L1[0][1]-sft[i][0]:L1[1][1]-sft[i][0],L1[0][0]-sft[i][1]:L1[1][0]-sft[i][1]]
+#      L2_cut = im1[L2[0][1]-sft[i+dt][0]:L2[1][1]-sft[i+dt][0],L2[0][0]-sft[i+dt][1]:L2[1][0]-sft[i+dt][1]]-\
+#               im2[L2[0][1]-sft[i][0]:L2[1][1]-sft[i][0],L2[0][0]-sft[i][1]:L2[1][0]-sft[i][1]] 
+#      car_cut = im1[car[0][1]-sft[i+dt][0]:car[1][1]-sft[i+dt][0],car[0][0]-sft[i+dt][1]:car[1][0]-sft[i+dt][1]]-\
+#               im2[car[0][1]-sft[i][0]:car[1][1]-sft[i][0],car[0][0]-sft[i][1]:car[1][0]-sft[i][1]]
+#      ped_cut = im1[ped[0][1]-sft[i+dt][0]:ped[1][1]-sft[i+dt][0],ped[0][0]-sft[i+dt][1]:ped[1][0]-sft[i+dt][1]]-\
+#               im2[ped[0][1]-sft[i][0]:ped[1][1]-sft[i][0],ped[0][0]-sft[i][1]:ped[1][0]-sft[i][1]] 
+      L1_cut = im1[L1[0][1]+sft[i+dt][0]:L1[1][1]+sft[i+dt][0],L1[0][0]+sft[i+dt][1]:L1[1][0]+sft[i+dt][1]]-\
+               im2[L1[0][1]+sft[i][0]:L1[1][1]+sft[i][0],L1[0][0]+sft[i][1]:L1[1][0]+sft[i][1]]
+      L2_cut = im1[L2[0][1]+sft[i+dt][0]:L2[1][1]+sft[i+dt][0],L2[0][0]+sft[i+dt][1]:L2[1][0]+sft[i+dt][1]]-\
+               im2[L2[0][1]+sft[i][0]:L2[1][1]+sft[i][0],L2[0][0]+sft[i][1]:L2[1][0]+sft[i][1]] 
+      car_cut = im1[car[0][1]+sft[i+dt][0]:car[1][1]+sft[i+dt][0],car[0][0]+sft[i+dt][1]:car[1][0]+sft[i+dt][1]]-\
+               im2[car[0][1]+sft[i][0]:car[1][1]+sft[i][0],car[0][0]+sft[i][1]:car[1][0]+sft[i][1]]
+      ped_cut = im1[ped[0][1]+sft[i+dt][0]:ped[1][1]+sft[i+dt][0],ped[0][0]+sft[i+dt][1]:ped[1][0]+sft[i+dt][1]]-\
+               im2[ped[0][1]+sft[i][0]:ped[1][1]+sft[i][0],ped[0][0]+sft[i][1]:ped[1][0]+sft[i][1]]
       L1_var.append(L1_cut.var())
       L2_var.append(L2_cut.var())
       car_var.append(car_cut.var())
       ped_var.append(ped_cut.var()) 
               
-figure(2,figsize=[7.5,7.5]),
+figure(1,figsize=[7.5,7.5]),
 plot(range(len(L1_var)),L1_var,color = '#990000',lw=2)
 plot(range(len(L1_var)),L2_var, color = '#006600',lw=2)
 #plt.plot(range(len(L1_var)),ped_var, color = 'black',lw=2)

@@ -16,12 +16,14 @@ multi=False
 # -- utilities
 bord  = 20
 nside = 121 # npix/side of a postage stamp
-reg   = (80, 80, 200, 200) # (ul row, ul col, lr row, lr col)
-
+reg   = (80, 80, 201, 201) # (ul row, ul col, lr row, lr col)
+#reg   = (80, 700, 201, 821) # (ul row, ul col, lr row, lr col)
 
 # -- set the reference frame (registering off of the green image)
-rpath = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/'
-rfile = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/0537.png' 
+#rpath = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/'
+#rfile = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/0537.png' 
+rpath = 'C:/Users/atc327/Desktop/Traffic data/'
+rfile = 'C:/Users/atc327/Desktop/Traffic data/2.png' 
 im = np.array(Image.open(rfile).convert('L')).astype(np.float)
 ref   = 1.0*im[reg[0]:reg[2],reg[1]:reg[3]]
 ref  -= ref.mean()
@@ -67,7 +69,7 @@ for i in range(len(imlist)):
        cc_sub_mat[i] = conv_mat[nside//2-20:nside//2+21, nside//2-20:nside//2+21]
        # -- find the maximum correlation and add to the dictionary
        mind = conv_mat.argmax()
-       off  = [mind / nside - nside//2, mind % nside ]
+       off  = [mind / nside - nside//2, mind % nside- nside//2 ]
        cc_sub_dic[i] = off
 
         # -- send sub-matrix back to parent
