@@ -22,8 +22,8 @@ reg   = (80, 80, 201, 201) # (ul row, ul col, lr row, lr col)
 # -- set the reference frame (registering off of the green image)
 #rpath = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/'
 #rfile = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/0537.png' 
-rpath = 'C:/Users/atc327/Desktop/Traffic data/'
-rfile = 'C:/Users/atc327/Desktop/Traffic data/2.png' 
+rpath = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/'
+rfile = 'C:/Users/atc327/Desktop/Traffic data/Day/resize/0537.png' 
 im = np.array(Image.open(rfile).convert('L')).astype(np.float)
 ref   = 1.0*im[reg[0]:reg[2],reg[1]:reg[3]]
 ref  -= ref.mean()
