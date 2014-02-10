@@ -38,6 +38,18 @@ L1_var_B = []
 L2_var_B = []
 car_var_B = []
 
+L1_mean_R = []
+L1_mean_G = []
+L1_mean_B = []
+
+L2_mean_R = []
+L2_mean_G = []
+L2_mean_B = []
+
+car_mean_R = []
+car_mean_G = []
+car_mean_B = []
+
 bord =10
 im1 = np.zeros([750+2*bord,900+2*bord,3])
 im2 = np.zeros([750+2*bord,900+2*bord,3])
@@ -60,9 +72,14 @@ for i in range(len(imlist)-dt):
       car_cut_R =im1[car[0][1]:car[1][1],car[0][0]:car[1][0],0]-\
                  im2[car[0][1]:car[1][1],car[0][0]:car[1][0],0]
 
+      
       L1_var_R.append(L1_cut_R.var())
       L2_var_R.append(L2_cut_R.var())
       car_var_R.append(car_cut_R.var())
+      L1_mean_R.append(L1_cut_R.mean())
+      L2_mean_R.append(L2_cut_R.mean())
+      car_mean_R.append(car_cut_R.mean())
+      
 #======================================================================
       L1_cut_G = im1[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],1]-\
                  im2[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],1]
@@ -74,6 +91,9 @@ for i in range(len(imlist)-dt):
       L1_var_G.append(L1_cut_G.var())
       L2_var_G.append(L2_cut_G.var())
       car_var_G.append(car_cut_G.var())
+      L1_mean_G.append(L1_cut_G.mean())
+      L2_mean_G.append(L2_cut_G.mean())
+      car_mean_G.append(car_cut_G.mean())      
 #========================================================================
       L1_cut_B = im1[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],2]-\
                  im2[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],2]
@@ -85,12 +105,23 @@ for i in range(len(imlist)-dt):
       L1_var_B.append(L1_cut_B.var())
       L2_var_B.append(L2_cut_B.var())
       car_var_B.append(car_cut_B.var())
+      L1_mean_B.append(L1_cut_B.mean())
+      L2_mean_B.append(L2_cut_B.mean())
+      car_mean_B.append(car_cut_B.mean())
 
 
-              
-figure(1,figsize=[7.5,7.5]),
-plot(range(len(L1_var_R)),L1_var_R,color = '#990000',lw=2)
-plot(range(len(L1_var_R)),L2_var_R, color = '#006600',lw=2)
+diff = [np.abs(x-y) for x,y in zip(L1_mean_R,L1_mean_G)]
+L1_var_R_mdfy = [L1_var_R[i] if diff[i]>4 else 0 for i in range(len(L1_var_R))]
+L2_var_R_mdfy = [L2_var_R[i] if diff[i]>4 else 0 for i in range(len(L1_var_R))]
+
+      
+idx = [i if (L1_mean_R[i]*L1_mean_G[i])<0 else -99 for i in range(len(L1_var_R)) ]
+
+
+        
+figure(7,figsize=[7.5,7.5]),
+plot(range(len(L1_var_R)),L1_var_R_mdfy,color = '#990000',lw=2)
+plot(range(len(L1_var_R)),L2_var_R_mdfy, color = '#006600',lw=2)
 fill_between(range(len(L1_var_R)),car_var_R,facecolor = '#0099FF',edgecolor='#0000FF')
 
 plt.grid(b=1,lw =2)
@@ -99,7 +130,7 @@ plt.ylabel('region variance [arb units]')
 pylab.xlim([500,674])
 title('Red')
 
-figure(2,figsize=[7.5,7.5]),
+figure(7,figsize=[7.5,7.5]),
 plot(range(len(L1_var_R)),L1_var_G,color = '#990000',lw=2)
 plot(range(len(L1_var_R)),L2_var_G, color = '#006600',lw=2)
 fill_between(range(len(L1_var_R)),car_var_G,facecolor = '#0099FF',edgecolor='#0000FF')
@@ -110,7 +141,7 @@ plt.ylabel('region variance [arb units]')
 pylab.xlim([500,674])
 title('Green')
 
-figure(3,figsize=[7.5,7.5]),
+figure(8,figsize=[7.5,7.5]),
 plot(range(len(L1_var_R)),L1_var_B,color = '#990000',lw=2)
 plot(range(len(L1_var_R)),L2_var_B, color = '#006600',lw=2)
 fill_between(range(len(L1_var_R)),car_var_B,facecolor = '#0099FF',edgecolor='#0000FF')
