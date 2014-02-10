@@ -67,7 +67,7 @@ for i in range(len(imlist)-dt):
       car_var.append(car_cut.var())
 #      ped_var.append(ped_cut.var()) 
               
-figure(1,figsize=[7.5,7.5]),
+figure(2,figsize=[7.5,7.5]),
 plot(range(len(L1_var)),L1_var,color = '#990000',lw=2)
 plot(range(len(L1_var)),L2_var, color = '#006600',lw=2)
 #plt.plot(range(len(L1_var)),ped_var, color = 'black',lw=2)

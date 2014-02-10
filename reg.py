@@ -15,7 +15,7 @@ import pickle
 multi=False
 # -- utilities
 bord  = 20
-nside = 121 # npix/side of a postage stamp
+nside = 121.0 # npix/side of a postage stamp
 reg   = (80, 80, 201, 201) # (ul row, ul col, lr row, lr col)
 #reg   = (80, 700, 201, 821) # (ul row, ul col, lr row, lr col)
 
@@ -54,7 +54,7 @@ imlist = glob.glob( os.path.join(rpath, '*.png') )
 # -- loop through files
 for i in range(len(imlist)):
 
-       print("DST_REGISTER: " + "registering file {0} of {1}".format(i+1,len(imlist)))
+       print("DST_REGISTER: " + "registering file {0} of {1}".format(i,len(imlist)-1))
 
        # -- shift and find correlation
 
@@ -69,7 +69,7 @@ for i in range(len(imlist)):
        cc_sub_mat[i] = conv_mat[nside//2-20:nside//2+21, nside//2-20:nside//2+21]
        # -- find the maximum correlation and add to the dictionary
        mind = conv_mat.argmax()
-       off  = [mind / nside - nside//2, mind % nside- nside//2 ]
+       off  = [int(round(mind / nside) - nside//2), int(mind % nside- nside//2) ]
        cc_sub_dic[i] = off
 
         # -- send sub-matrix back to parent
@@ -79,7 +79,7 @@ for i in range(len(imlist)):
 #   else:
 #      return cc_sub_mat, cc_sub_dic
 
-f = file('shift.pkl','wb')
+f = file('shift2.pkl','wb')
 pickle.dump(cc_sub_dic,f)
 f.close()
 
