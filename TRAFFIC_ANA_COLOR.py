@@ -115,7 +115,12 @@ L1_var_R_mdfy = [L1_var_R[i] if diff[i]>4 else 0 for i in range(len(L1_var_R))]
 L2_var_R_mdfy = [L2_var_R[i] if diff[i]>4 else 0 for i in range(len(L1_var_R))]
 
       
-idx = [i if (L1_mean_R[i]*L1_mean_G[i])<0 else -99 for i in range(len(L1_var_R)) ]
+idx = [i if (L1_mean_R[i]*L1_mean_G[i])<0 else -99  for i in range(len(L1_var_R))]
+idx[:] = (value for value in idx if value != -99)
+
+v =  [(L1_mean_R[i]*L1_mean_G[i]) if (L1_mean_R[i]*L1_mean_G[i])<0 else -99  for i in range(len(L1_var_R))]
+v[:] = (value for value in v  if value != -99)
+
 
 
         
