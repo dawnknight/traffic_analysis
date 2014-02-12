@@ -5,12 +5,6 @@ Created on Mon Feb 10 21:16:19 2014
 @author: atc327
 """
 
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Feb 07 19:41:40 2014
-
-@author: atc327
-"""
 
 import os, glob,sys,pylab,pickle
 import scipy as sp
@@ -40,15 +34,15 @@ car = [[1194,1381],[1343,1522]]
 
 L1_cut_R = np.zeros([42,20])
 L2_cut_R = np.zeros([47,19])
-ar_cut_R = np.zeros([149,141])
+car_cut_R = np.zeros([149,141])
 
 L1_cut_G = np.zeros([42,20])
 L2_cut_G = np.zeros([47,19])
-ar_cut_G = np.zeros([149,141])
+car_cut_G = np.zeros([149,141])
 
 L1_cut_B = np.zeros([42,20])
 L2_cut_B = np.zeros([47,19])
-ar_cut_B = np.zeros([149,141])
+car_cut_B = np.zeros([149,141])
 
 def traffic_process(idx):
 

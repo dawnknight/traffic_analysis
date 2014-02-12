@@ -64,13 +64,22 @@ for i in range(len(imlist)-dt):
         
       im1 = np.roll(np.roll(im1,sft[i+dt][0],axis=0),sft[i+dt][1],axis=1)
       im2 = np.roll(np.roll(im2,sft[i][0],axis=0),sft[i][1],axis=1)       
-        
-      L1_cut_R = im1[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],0]-\
-                 im2[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],0]
-      L2_cut_R = im1[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],0]-\
-                 im2[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],0]
-      car_cut_R =im1[car[0][1]:car[1][1],car[0][0]:car[1][0],0]-\
-                 im2[car[0][1]:car[1][1],car[0][0]:car[1][0],0]
+      
+      diff = im1-im2      
+      
+      L1_cut_R = diff[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],0]
+      L2_cut_R = diff[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],0]
+      car_cut_R =diff[car[0][1]:car[1][1],car[0][0]:car[1][0],0]
+          
+    #======================================================================
+      L1_cut_G = diff[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],1]
+      L2_cut_G = diff[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],1]
+      car_cut_G =diff[car[0][1]:car[1][1],car[0][0]:car[1][0],1]
+         
+    #========================================================================
+      L1_cut_B = diff[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],2]
+      L2_cut_B = diff[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],2]
+      car_cut_B =diff[car[0][1]:car[1][1],car[0][0]:car[1][0],2] 
 
       
       L1_var_R.append(L1_cut_R.var())
@@ -79,14 +88,7 @@ for i in range(len(imlist)-dt):
       L1_mean_R.append(L1_cut_R.mean())
       L2_mean_R.append(L2_cut_R.mean())
       car_mean_R.append(car_cut_R.mean())
-      
-#======================================================================
-      L1_cut_G = im1[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],1]-\
-                 im2[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],1]
-      L2_cut_G = im1[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],1]-\
-                 im2[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],1]
-      car_cut_G =im1[car[0][1]:car[1][1],car[0][0]:car[1][0],1]-\
-                 im2[car[0][1]:car[1][1],car[0][0]:car[1][0],1]
+
 
       L1_var_G.append(L1_cut_G.var())
       L2_var_G.append(L2_cut_G.var())
@@ -94,13 +96,6 @@ for i in range(len(imlist)-dt):
       L1_mean_G.append(L1_cut_G.mean())
       L2_mean_G.append(L2_cut_G.mean())
       car_mean_G.append(car_cut_G.mean())      
-#========================================================================
-      L1_cut_B = im1[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],2]-\
-                 im2[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],2]
-      L2_cut_B = im1[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],2]-\
-                 im2[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],2]
-      car_cut_B =im1[car[0][1]:car[1][1],car[0][0]:car[1][0],2]-\
-                 im2[car[0][1]:car[1][1],car[0][0]:car[1][0],2]
 
       L1_var_B.append(L1_cut_B.var())
       L2_var_B.append(L2_cut_B.var())
