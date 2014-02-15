@@ -44,6 +44,7 @@ def Local_max(mtx):  # mtx is N*1 vector
 
 def main():
 
+
     L1_var = pickle.load(open("L1_var.pkl","rb"))
     L2_var = pickle.load(open("L2_var.pkl","rb"))
     car_var = pickle.load(open("car_var.pkl","rb"))

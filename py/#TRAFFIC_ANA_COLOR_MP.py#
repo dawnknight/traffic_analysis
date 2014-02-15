@@ -121,8 +121,7 @@ if __name__=='__main__':
             else nfiles//(nproc-1)
 
     if multi:
-            # -- initialize the full correlation matrix and processes
-            parents, childs, ps = [], [],[]
+            # -- initialize the full correlation matrix and processes, childs, ps = [], [],[]
 
             # -- initialize the pipes and processes, then start
             print 'start!!'   
@@ -169,9 +168,8 @@ if __name__=='__main__':
 
 
 
-    
 #diff = [np.abs(x-y) for x,y in zip(L1_mean_R,L1_mean_G)]
-#L1_var_R_mdfy = [L1_var_R[i] if diff[i]>4 else 0 for i in range(len(L1_var_R))]
+_var_R_mdfy = [L1_var_R[i] if diff[i]>4 else 0 for i in range(len(L1_var_R))]
 #L2_var_R_mdfy = [L2_var_R[i] if diff[i]>4 else 0 for i in range(len(L1_var_R))]    
     
       
