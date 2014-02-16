@@ -179,6 +179,7 @@ def rm(idx,sub_idx):
     for i in range(1,len(label)):    
         sub_idx.remove(label[i])
     return sub_idx
+
 def select_value(mean_mtx,var_mtx): # mtx are both a N*3 arrays                                                                                           
     idx = [i if (mean_mtx[::,0][i]*mean_mtx[::,1][i])<0 else -99  for i in range(len(mean_mtx))]
     idx[:] = (value for value in idx if value != -99) #frame i and frame i+1 are in different sign                                    
