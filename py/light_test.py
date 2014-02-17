@@ -3,6 +3,7 @@ import scipy as sp
 import numpy as np
 import scipy.ndimage as nd
 import matplotlib.pyplot as plt
+from scipy.stats import mode
 
 def Rm(idx):
     label =[]
@@ -41,7 +42,9 @@ def Trans_Var(var_mtx,trans_idx):
 
 def Local_Max(mtx):  # mtx is N*1 vector
     max_label =np.r_[True, mtx[1:] > mtx[:-1]] & np.r_[mtx[:-1] > mtx[1:], True]
-    max_idx = [i for i in range(len(mtx)) if max_label[i]==True]
+    # filter the noise effect
+    constrain = [True if mtx[max(0,i-5):min(i+5,len(mtx))].var()>1 else False for i in range(len(mtx))]      
+    max_idx = [i for i in range(len(mtx)) if (max_label[i] & constrain[i]) ==True]
 
     return max_idx
 
@@ -113,7 +116,7 @@ def Main():
 
      
 
-    figure(2,figsize=[7.5,7.5]),
+    figure(1,figsize=[7.5,7.5]),
     plot(range(len(L1_var)),L1_VAR_RG[::,0],color = '#990000',lw=2)
     plot(range(len(L1_var)),L2_VAR_RG[::,0]/3, color = '#006600',lw=2)
     fill_between(range(len(L1_var)),car_VAR[::,0]/2,facecolor = '#0099FF',edgecolor='#0000FF')
@@ -124,9 +127,12 @@ def Main():
     plt.ylabel('region variance [arb units]')
     title('Red')
     
-    figure(3,figsize=[7.5,7.5]),
+    figure(2,figsize=[7.5,7.5]),
     plot(range(len(react_T)),react_T,color = '#990000',lw=2)
+    plt.grid(b=1,lw =2)
 
-
+    figure(3,figsize=[7.5,7.5]),
+    plt.hist(react_T,bins=30)
+    plt.grid(b=1,lw =2)   
 
 Main()
