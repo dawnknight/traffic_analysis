@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from scipy.stats import mode
 from scipy.interpolate import interp1d
 
-
 def Rm(idx):
     label =[]
     for i in range(1,len(idx)):
@@ -15,7 +14,6 @@ def Rm(idx):
     for i in range(0,len(label))[::-1]:
         idx=delete(idx,label[i])
     return idx
-
 
 def Trans_Idx(mean_mtx): # mtx are both a N*3 arrays                                                      
     v_RG = np.r_[mean_mtx[::,1]>0] & np.r_[mean_mtx[::,0]<0] \
