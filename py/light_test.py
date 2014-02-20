@@ -4,6 +4,8 @@ import numpy as np
 import scipy.ndimage as nd
 import matplotlib.pyplot as plt
 from scipy.stats import mode
+from scipy.interpolate import interp1d
+
 
 def Rm(idx):
     label =[]
@@ -52,25 +54,41 @@ def React_Time(mv_idx,RG_idx,mv_var,partial=0.2,ck_th=50): # mv_var is N*1 vecto
     mv_idx = np.asarray(mv_idx)    
     mv_var = np.asarray(mv_var)
     RG_idx = np.asarray(RG_idx)
-    
+    Nsf = np.zeros(len(mv_idx))
     period = np.zeros(len(mv_idx))
     for ii in range(len(mv_idx)):
         val = mv_var[mv_idx[ii]]*partial
         
         tmp = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]<=val]
+        tmpE = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]==val]
+        table =arange(max(0,mv_idx[ii]-ck_th),mv_idx[ii])[::-1]
+        if True in tmpE: 
+            # number of start moving frame 
+            Nsf[ii] = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]
+            period[ii] = Nsf[ii] - RG_idx[ii]
+        else :
+            if True in tmp:               
+                LB = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]         
+                RB = LB+1
+                Nsf[ii] = interp1d([mv_var[LB],mv_var[RB]],[LB,RB])(val) 
+                period[ii] = Nsf[ii] - RG_idx[ii]                        
+            else:
+                # find the most frequent value around the traffic light impulse
+                num = ceil(mode(np.round(mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]],1))[0][0])
+                tmp = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]<=num]
+                tmpe = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]]==num]
+                if True in tmpe:
+                    Nsf[ii] = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]
+                    period[ii] = Nsf[ii] - RG_idx[ii]                      
+                else :
+                    LB = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]
+                    RB = LB+1
+                    Nsf[ii] = interp1d([mv_var[LB],mv_var[RB]],[LB,RB])(num)
+                    period[ii] = Nsf[ii] - RG_idx[ii]
+                print("At {0}: original {1} is too small".format(RG_idx[ii],val))
+                print("use most freq. number {0} as new threshold".format(num))
 
-        if True in tmp:
-            table =arange(max(0,mv_idx[ii]-ck_th),mv_idx[ii])[::-1]        
-            period[ii] = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]-RG_idx[ii]         
-        else:
-            # find the most frequent value
-            num = ceil(mode(np.round(mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]],1))[0][0])
-            tmp = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]]>num]
-            table =arange(max(0,mv_idx[ii]-ck_th),mv_idx[ii])
-            period[ii] = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]-RG_idx[ii]
-            print("At {0}: original {1} is too small".format(RG_idx[ii],val/partial))
-            print("use most freq. number {0} as new threshold".format(num))
-    return period
+    return period,Nsf
 
 def Move_Idx(RG_idx,lcmax_idx):
 
@@ -90,9 +108,17 @@ def Move_Idx(RG_idx,lcmax_idx):
 
     return mv_idx  
 
-
+def Bg_Ana(mtx,sidx,eidx):
+    VM = np.zeros(len(sidx))
+    for i in arange(len(sidx)):
+        s = min(sidx[i],eidx[i]) 
+        e = min(max(sidx[i],eidx[i])+1,len(mtx))
+        VM[i] = mtx[s:e].mean()
+    return VM
 
 def Main():
+    
+    fps = 4
 
     L1_var = pickle.load(open("L1_var.pkl","rb"))
     L2_var = pickle.load(open("L2_var.pkl","rb"))
@@ -115,9 +141,10 @@ def Main():
     car_VAR = nd.gaussian_filter(np.asarray(car_var.values()),3)
     lcmax_idx_R = Local_Max(car_VAR[::,0])    
 
-    react_T = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
+    react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
 
-
+    # env variance mean
+    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf))
      
 
     figure(1,figsize=[7.5,7.5]),
@@ -140,7 +167,7 @@ def Main():
     title('Traffic Light Transitions (Red->Green)')
     
     figure(3,figsize=[7.5,7.5]),
-    plot(range(len(react_T)),react_T/4,color = '#990000',lw=2)
+    plot(range(len(react_T)),react_T/fps,color = '#990000',lw=2)
     plt.grid(b=1,lw =2)
 
     plt.grid(b=1,lw =2)
@@ -148,16 +175,21 @@ def Main():
     plt.ylabel('Time [s]')
     title('Driver Reaction Time')
 
-    
-
-
     figure(4,figsize=[7.5,7.5]),
-    plt.hist(react_T/4,bins=20)
+    plt.hist(react_T/fps,bins=20)
 
     plt.grid(b=1,lw =2)   
     plt.xlabel('Time [s]')
     plt.ylabel('Number of Driver')
     title('Driver Reaction Time')
+
+    figure(5,figsize=[7.5,7.5]),
+    plot(env_VM,react_T/fps,'ro')
+
+    plt.grid(b=1,lw =2)
+    plt.xlabel('Variance of background [arb units]')
+    plt.ylabel('Time spend [s]')
+    title('Relation between Driver Reaction Time and background variance')
 
 
 
