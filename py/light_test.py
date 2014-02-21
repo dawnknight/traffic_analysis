@@ -142,7 +142,7 @@ def Main():
     react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
 
     # env variance mean
-    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf))
+    env_VM = Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf))
      
 
     figure(1,figsize=[7.5,7.5]),
@@ -189,6 +189,7 @@ def Main():
     plt.ylabel('Time spend [s]')
     title('Relation between Driver Reaction Time and background variance')
 
-
-
+    for i in range(len(env_VM)):
+        plt.text(env_VM[i],react_T[i]/fps,i)
+        raw_input("Press Enter to terminate.")
 Main()
