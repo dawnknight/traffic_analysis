@@ -192,4 +192,5 @@ def Main():
     for i in range(len(env_VM)):
         plt.text(env_VM[i],react_T[i]/fps,i)
         raw_input("Press Enter to terminate.")
+
 Main()
