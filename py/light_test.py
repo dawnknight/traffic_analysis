@@ -6,25 +6,47 @@ import matplotlib.pyplot as plt
 from scipy.stats import mode
 from scipy.interpolate import interp1d
 
-def Rm(idx):
+# testing
+
+def Rm(idx,var):
     label =[]
-    for i in range(1,len(idx)):
-        if (idx[i]-idx[i-1])<15:
-            label.append(i-1)
+    for i in range(len(idx)):
+       tmp = arange(len(idx)) 
+       chk = idx<idx[i]+15
+       chk_idx = [ii for ii in range(i,len(idx)) if chk[ii]==True]
+       if chk_idx != []:
+           MAX = var[idx[i]]
+           MAX_idx = i
+           for j in range(len(chk_idx)):
+               if var[idx[j+i]]>MAX:
+                  MAX = var[idx[chk_idx[j]+i]]
+                  MAX_idx = j+i 
+           tmp = delete(tmp,MAX_idx)
+       label = label + list(tmp)
+    label = sorted(list(set(label)))
+
+#    for i in range(1,len(idx)):
+#        if (idx[i]-idx[i-1])<15:
+#            if var[idx[i]]>var[idx[i-1]]:
+#                label.append(i-1)
+#            else:
+#                label.append(i)
     for i in range(0,len(label))[::-1]:
         idx=delete(idx,label[i])
     return idx
 
-def Trans_Idx(mean_mtx): # mtx are both a N*3 arrays                                                      
-    v_RG = np.r_[mean_mtx[::,1]>0] & np.r_[mean_mtx[::,0]<0] \
-                 & np.r_[(mean_mtx[::,1]*mean_mtx[::,0])<-1]
-    v_GR = np.r_[mean_mtx[::,1]<0] & np.r_[mean_mtx[::,0]>0] \
-                 & np.r_[(mean_mtx[::,1]*mean_mtx[::,0])<-1]
+def Trans_Idx(mean_mtx,var): # mtx are both a N*3 arrays
 
-    RG_idx = [i for i in range(len(mean_mtx)) if v_RG[i]==True]
-    GR_idx = [i for i in range(len(mean_mtx)) if v_GR[i]==True]
+    RG = (mean_mtx[::,1]*mean_mtx[::,0])
+    GR = (mean_mtx[::,1]*mean_mtx[::,0])                                                  
+    v_RG = np.r_[mean_mtx[::,1]>0] & np.r_[mean_mtx[::,0]<0] \
+                                   & np.r_[RG<-4]
+    v_GR = np.r_[mean_mtx[::,1]<0] & np.r_[mean_mtx[::,0]>0] \
+                                   & np.r_[GR<-4]
+    RG_idx = np.array([i for i in range(len(mean_mtx)) if v_RG[i]==True])
+    GR_idx = np.array([i for i in range(len(mean_mtx)) if v_GR[i]==True])
     
-    return Rm(RG_idx),Rm(GR_idx) 
+    return Rm(RG_idx,var[::,0]),Rm(GR_idx,var[::,0]) 
 
 def Trans_Var(var_mtx,trans_idx):
     tmp_R = np.zeros(len(var_mtx))
@@ -116,19 +138,18 @@ def Bg_Ana(mtx,sidx,eidx):
 
 def Main():
     
-    fps = 4
+    fps = 10
 
-    L1_var = pickle.load(open("L1_var.pkl","rb"))
-    L2_var = pickle.load(open("L2_var.pkl","rb"))
-    car_var = pickle.load(open("car_var.pkl","rb"))
-    env_var = pickle.load(open("env_var.pkl","rb"))
-    L1_avg = pickle.load(open("L1_avg.pkl","rb"))
-    L2_avg = pickle.load(open("L2_avg.pkl","rb"))
+    L1_var = pickle.load(open("./Night/L1_var.pkl","rb"))
+    L2_var = pickle.load(open("./Night/L2_var.pkl","rb"))
+    car_var = pickle.load(open("./Night/car_var.pkl","rb"))
+    env_var = pickle.load(open("./Night/env_var.pkl","rb"))
+    L1_avg = pickle.load(open("./Night/L1_avg.pkl","rb"))
+    L2_avg = pickle.load(open("./Night/L2_avg.pkl","rb"))
    
 
-
-    L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()))
-    L2_RG_idx,L2_GR_idx = Trans_Idx(np.asarray(L2_avg.values()))
+    L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()),np.asarray(L1_var.values()))
+    L2_RG_idx,L2_GR_idx = Trans_Idx(np.asarray(L2_avg.values()),np.asarray(L2_var.values()))
      
     L1_VAR_RG = Trans_Var(np.asarray(L1_var.values()),L1_RG_idx)
     L1_VAR_GR = Trans_Var(np.asarray(L1_var.values()),L1_GR_idx)
@@ -142,7 +163,7 @@ def Main():
     react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
 
     # env variance mean
-    env_VM = Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf))
+    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf))
      
 
     figure(1,figsize=[7.5,7.5]),
@@ -191,6 +212,6 @@ def Main():
 
     for i in range(len(env_VM)):
         plt.text(env_VM[i],react_T[i]/fps,i)
-        raw_input("Press Enter to terminate.")
+
 
 Main()
