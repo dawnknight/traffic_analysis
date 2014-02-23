@@ -6,43 +6,50 @@ import matplotlib.pyplot as plt
 from scipy.stats import mode
 from scipy.interpolate import interp1d
 
-# testing
-
 def Rm(idx,var):
     label =[]
-    for i in range(len(idx)):
-       tmp = arange(len(idx)) 
-       chk = idx<idx[i]+15
-       chk_idx = [ii for ii in range(i,len(idx)) if chk[ii]==True]
-       if chk_idx != []:
-           MAX = var[idx[i]]
-           MAX_idx = i
-           for j in range(len(chk_idx)):
-               if var[idx[j+i]]>MAX:
-                  MAX = var[idx[chk_idx[j]+i]]
-                  MAX_idx = j+i 
-           tmp = delete(tmp,MAX_idx)
-       label = label + list(tmp)
-    label = sorted(list(set(label)))
-
-#    for i in range(1,len(idx)):
-#        if (idx[i]-idx[i-1])<15:
-#            if var[idx[i]]>var[idx[i-1]]:
-#                label.append(i-1)
-#            else:
-#                label.append(i)
-    for i in range(0,len(label))[::-1]:
-        idx=delete(idx,label[i])
-    return idx
+    MAX = []
+    MAX_idx = []
+    reset = True
+    if len(idx)==1:
+       label.append(idx[0])
+    else:
+        for i in range(1,len(idx)):
+            if reset:
+                MAX = var[idx[i-1]]
+                MAX_idx = idx[i-1]
+                reset = False
+            if (idx[i]-idx[i-1])<15:
+                if not MAX:
+                    if var[idx[i]]>var[idx[i-1]]:
+                        MAX = var[idx[i]] 
+                        MAX_idx = idx[i]
+                    else:
+                        MAX = var[idx[i-1]]
+                        MAX_idx = idx[i-1]
+                else:
+                    if var[idx[i]]>MAX:
+                        MAX = var[idx[i]]
+                        MAX_idx = idx[i]
+                if i == len(idx)-1:
+                    label.append(MAX_idx)
+            else:
+                label.append(MAX_idx)
+                MAX =[]
+                MAX_idx = []
+                reset = True  
+                if i == len(idx)-1:
+                    label.append(idx[i])
+    return label
 
 def Trans_Idx(mean_mtx,var): # mtx are both a N*3 arrays
 
     RG = (mean_mtx[::,1]*mean_mtx[::,0])
     GR = (mean_mtx[::,1]*mean_mtx[::,0])                                                  
     v_RG = np.r_[mean_mtx[::,1]>0] & np.r_[mean_mtx[::,0]<0] \
-                                   & np.r_[RG<-4]
+                                   & np.r_[RG<-1]
     v_GR = np.r_[mean_mtx[::,1]<0] & np.r_[mean_mtx[::,0]>0] \
-                                   & np.r_[GR<-4]
+                                   & np.r_[GR<-1]
     RG_idx = np.array([i for i in range(len(mean_mtx)) if v_RG[i]==True])
     GR_idx = np.array([i for i in range(len(mean_mtx)) if v_GR[i]==True])
     
@@ -147,6 +154,16 @@ def Main():
     L1_avg = pickle.load(open("./Night/L1_avg.pkl","rb"))
     L2_avg = pickle.load(open("./Night/L2_avg.pkl","rb"))
    
+#    fps = 4
+#    L1_var = pickle.load(open("./Feb11/L1_var.pkl","rb"))
+#    L2_var = pickle.load(open("./Feb11/L2_var.pkl","rb"))
+#    car_var = pickle.load(open("./Feb11/car_var.pkl","rb"))
+#    env_var = pickle.load(open("./Feb11/env_var.pkl","rb"))
+#    L1_avg = pickle.load(open("./Feb11/L1_avg.pkl","rb"))
+#    L2_avg = pickle.load(open("./Feb11/L2_avg.pkl","rb"))
+
+
+
 
     L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()),np.asarray(L1_var.values()))
     L2_RG_idx,L2_GR_idx = Trans_Idx(np.asarray(L2_avg.values()),np.asarray(L2_var.values()))
