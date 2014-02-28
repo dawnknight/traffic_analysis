@@ -11,6 +11,7 @@ def Main():
 
     #RG_idx = pickle.load(open("RG_idx.pkl","rb"))
     #path ='/home/andyc/image/Feb11/'
+    RG_idx = [86,179,196,221]
     path ='/home/andyc/image/Night_frame/'
     imlist = sorted(glob.glob( os.path.join(path, '*.jpg')))
     H,W,O = nd.imread(imlist[0]).shape
@@ -19,14 +20,14 @@ def Main():
     im2  = np.zeros([H,W,O])
     Cimg = np.zeros([H,W*2,O])
 
-    #for i in range(len(RG_idx)):
-    for i in range(1):
-        #lb = RG_idx[i]-5
-        #ub = RG_idx[i]+30
-        lb = 120
-        ub = 150  
+    for i in range(len(RG_idx)):
+    #for i in range(1):
+        lb = RG_idx[i]-1
+        ub = RG_idx[i]+2
+        #lb = 120
+        #ub = 150  
         for j in range(lb,ub):
-            #print('in {0}/{1} idx set, image {2}/{3}'.format(i,len(RG_idx),j-lb,(ub-lb)))  
+            print('in {0}/{1} idx set, image {2}/{3}'.format(i+1,len(RG_idx),j-lb+1,(ub-lb)))  
             im1 = nd.imread(imlist[j]).astype(np.float)
             im2 = nd.imread(imlist[j+1]).astype(np.float)  
             diff= ((im2[:,:,0]-im1[:,:,0])+300)/2.0 

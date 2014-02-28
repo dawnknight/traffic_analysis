@@ -145,22 +145,22 @@ def Bg_Ana(mtx,sidx,eidx):
 
 def Main():
     
-    fps = 10
+#    fps = 10
 
-    L1_var = pickle.load(open("./Night/L1_var.pkl","rb"))
-    L2_var = pickle.load(open("./Night/L2_var.pkl","rb"))
-    car_var = pickle.load(open("./Night/car_var.pkl","rb"))
-    env_var = pickle.load(open("./Night/env_var.pkl","rb"))
-    L1_avg = pickle.load(open("./Night/L1_avg.pkl","rb"))
-    L2_avg = pickle.load(open("./Night/L2_avg.pkl","rb"))
+#    L1_var = pickle.load(open("./Night/L1_var.pkl","rb"))
+#    L2_var = pickle.load(open("./Night/L2_var.pkl","rb"))
+#    car_var = pickle.load(open("./Night/car_var.pkl","rb"))
+#    env_var = pickle.load(open("./Night/env_var.pkl","rb"))
+#    L1_avg = pickle.load(open("./Night/L1_avg.pkl","rb"))
+#    L2_avg = pickle.load(open("./Night/L2_avg.pkl","rb"))
    
-#    fps = 4
-#    L1_var = pickle.load(open("./Feb11/L1_var.pkl","rb"))
-#    L2_var = pickle.load(open("./Feb11/L2_var.pkl","rb"))
-#    car_var = pickle.load(open("./Feb11/car_var.pkl","rb"))
-#    env_var = pickle.load(open("./Feb11/env_var.pkl","rb"))
-#    L1_avg = pickle.load(open("./Feb11/L1_avg.pkl","rb"))
-#    L2_avg = pickle.load(open("./Feb11/L2_avg.pkl","rb"))
+    fps = 4
+    L1_var = pickle.load(open("./Feb11/L1_var.pkl","rb"))
+    L2_var = pickle.load(open("./Feb11/L2_var.pkl","rb"))
+    car_var = pickle.load(open("./Feb11/car_var.pkl","rb"))
+    env_var = pickle.load(open("./Feb11/ped_var.pkl","rb"))
+    L1_avg = pickle.load(open("./Feb11/L1_avg.pkl","rb"))
+    L2_avg = pickle.load(open("./Feb11/L2_avg.pkl","rb"))
 
 
 
@@ -173,7 +173,8 @@ def Main():
     L2_VAR_RG = Trans_Var(np.asarray(L2_var.values()),L2_RG_idx)
     L2_VAR_GR = Trans_Var(np.asarray(L2_var.values()),L2_GR_idx)
     
-    env_VAR = nd.gaussian_filter(np.asarray(env_var.values()),3)
+#    env_VAR = nd.gaussian_filter(np.asarray(env_var.values()),3)
+    env_VAR = np.asarray(env_var.values())
     car_VAR = nd.gaussian_filter(np.asarray(car_var.values()),3)
     lcmax_idx_R = Local_Max(car_VAR[::,0])    
 
@@ -219,16 +220,14 @@ def Main():
     plt.ylabel('Number of Driver')
     title('Driver Reaction Time')
 
-    figure(5,figsize=[7.5,7.5]),
+    figure(7,figsize=[7.5,7.5]),
     plot(env_VM,react_T/fps,'ro')
 
     plt.grid(b=1,lw =2)
     plt.xlabel('Variance of background [arb units]')
     plt.ylabel('Time spend [s]')
-    title('Relation between Driver Reaction Time and background variance')
-
+#    title('Relation between Driver Reaction Time and background variance')
+    title('Relation between Driver Reaction Time and ped variance')
     for i in range(len(env_VM)):
         plt.text(env_VM[i],react_T[i]/fps,i)
-
-
 Main()

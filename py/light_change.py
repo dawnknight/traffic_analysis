@@ -26,19 +26,21 @@ def Env_Var(r1,r2,r3,mtx):
 
 def Tra_Ana(multi):
 
-#    path ='/home/andyc/image/Feb11/'
-    path ='/home/andyc/image/Night_frame/'
+    path ='/home/andyc/image/Feb11/'
+#    path ='/home/andyc/image/Night_frame/'
     imlist = sorted(glob.glob( os.path.join(path, '*.jpg')))    
     
     H,W,O = nd.imread(imlist[0]).shape
 
-#    L1 = [[723,310],[738,345]]
-#    L2 = [[1185,267],[1197,303]]
-#    car =[[932,167],[1042,330]]
+    L1 = [[723,310],[738,345]]    #Day
+    L2 = [[1185,267],[1197,303]]  #Day
+    car =[[932,167],[1042,330]]   #Day
+#    L1 = [[815,394],[971,537]]                                                                                                           #    L2 = [[764,546],[983,679]] 
 
-    L1 = [[673,852],[683,900]]
-    L2 = [[1238,874],[1247,919]]
-    car =[[962,689],[1048,876]]
+
+#    L1 = [[673,852],[683,900]]   #Night 
+#    L2 = [[1238,874],[1247,919]] #Night 
+#    car =[[962,689],[1048,876]]  #Night
 
 
     L1_var  ={}
@@ -186,46 +188,23 @@ def Tra_Ana(multi):
 
     return L1_var,L2_var,car_var,env_var,L1_avg,L2_avg  
 
-def rm(idx,sub_idx):
-    label =[]
-    for i in range(1,len(sub_idx)):
-        if (idx[sub_idx[i]]-idx[sub_idx[i-1]])<15:
-            label.append(sub_idx[i-1])
-    for i in range(1,len(label)):    
-        sub_idx.remove(label[i])
-    return sub_idx
 
-def select_value(mean_mtx,var_mtx): # mtx are both a N*3 arrays                                                                                           
-    idx = [i if (mean_mtx[::,0][i]*mean_mtx[::,1][i])<0 else -99  for i in range(len(mean_mtx))]
-    idx[:] = (value for value in idx if value != -99) #frame i and frame i+1 are in different sign                                    
-    v =  [(mean_mtx[::,0][i]*mean_mtx[::,1][i]) if (mean_mtx[::,1][i]*mean_mtx[::,0][i])<0 else -99  for i in range(len(mean_mtx))]
-    v[:] = (value for value in v  if value != -99)
-    sub_idx = [i for i,x in enumerate(v) if x <-1]    # index of idx                                                                         
-    sub_idx = rm(idx,sub_idx)     
-
-    tmp_R = np.zeros(len(var_mtx))
-    tmp_G = np.zeros(len(var_mtx))
-
-    for i in range(len(sub_idx)):
-        tmp_R[idx[sub_idx[i]]] = var_mtx[::,0][idx[sub_idx[i]]]
-        tmp_G[idx[sub_idx[i]]] = var_mtx[::,1][idx[sub_idx[i]]]
-
-    var_mtx[::,0] = tmp_R
-    var_mtx[::,1] = tmp_G
-
-    return var_mtx
 
 
 def main():
 
-    L1_var,L2_var,car_var,env_var,L1_avg,L2_avg = Tra_Ana(16)
-
-    pickle.dump(L1_var,open("./Night/L1_var.pkl","wb"),True)
-    pickle.dump(L2_var,open("./Night/L2_var.pkl","wb"),True)
-    pickle.dump(car_var,open("./Night/car_var.pkl","wb"),True)
-    pickle.dump(env_var,open("./Night/env_var.pkl","wb"),True)
-    pickle.dump(L2_avg,open("./Night/L2_avg.pkl","wb"),True)
-    pickle.dump(L1_avg,open("./Night/L1_avg.pkl","wb"),True)
+    L1_var,L2_var,car_var,env_var,L1_avg,L2_avg = Tra_Ana(24)
+ 
+#    pickle.dump(L1_var,open("./Feb11/L1_var.pkl","wb"),True)
+#    pickle.dump(L2_var,open("./Feb11/L2_var.pkl","wb"),True)
+    pickle.dump(L1_var,open("./Feb11/ped_var.pkl","wb"),True)
+    pickle.dump(L2_var,open("./Feb11/car2_var.pkl","wb"),True)
+    pickle.dump(car_var,open("./Feb11/car_var.pkl","wb"),True)
+    pickle.dump(env_var,open("./Feb11/env_var.pkl","wb"),True)
+#    pickle.dump(L1_avg,open("./Feb11/L1_avg.pkl","wb"),True)
+#    pickle.dump(L2_avg,open("./Feb11/L2_avg.pkl","wb"),True)
+    pickle.dump(L1_avg,open("./Feb11/ped_avg.pkl","wb"),True)
+    pickle.dump(L2_avg,open("./Feb11/car2_avg.pkl","wb"),True)
 
 
 tic = time.clock()
