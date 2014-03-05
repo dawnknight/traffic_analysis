@@ -140,7 +140,8 @@ def Bg_Ana(mtx,sidx,eidx):
     for i in arange(len(sidx)):
         s = min(sidx[i],eidx[i]) 
         e = min(max(sidx[i],eidx[i])+1,len(mtx))
-        VM[i] = mtx[s:e].mean()
+#        VM[i] = mtx[s:e].mean()
+        VM[i] = mtx[s:e].max()
     return VM
 
 def Main():

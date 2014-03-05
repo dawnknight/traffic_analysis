@@ -22,6 +22,11 @@ def Env_Var(r1,r2,r3,mtx):
             +(H*W-H1*W1-H2*W2-H3*W3)*Avg**2)\
             /(H*W-H1*W1-H2*W2-H3*W3)
     return Var 
+def Pts_Cnt(mtx,ub,lb):
+    c = sum([1 for i in range(len(mtx)) if (mtx[i]>ub or mtx[i]<lb)])    
+    return c
+
+
 
 
 def Tra_Ana(multi):
@@ -32,15 +37,29 @@ def Tra_Ana(multi):
     
     H,W,O = nd.imread(imlist[0]).shape
 
-    L1 = [[723,310],[738,345]]    #Day
-    L2 = [[1185,267],[1197,303]]  #Day
+#    L1 = [[723,310],[738,345]]    #Day
+#    L2 = [[1185,267],[1197,303]]  #Day
     car =[[932,167],[1042,330]]   #Day
-#    L1 = [[815,394],[971,537]]                                                                                                           #    L2 = [[764,546],[983,679]] 
+    L1 = [[815,394],[971,537]]   #Z crossing                                                
+    L2 = [[764,546],[983,679]]   #car 2
 
 
 #    L1 = [[673,852],[683,900]]   #Night 
 #    L2 = [[1238,874],[1247,919]] #Night 
 #    car =[[962,689],[1048,876]]  #Night
+
+
+    ref1 = nd.imread(imlist[600]).astype(np.float)
+    ref2 = nd.imread(imlist[599]).astype(np.float)
+    drefp = (ref1-ref2)[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],0].flatten()
+    drefc = (ref1-ref2)[L2[0][1]:L2[1][1],L2[0][0]:L2[1][0],0].flatten()
+    pub = drefp.mean()+5*drefp.std()     #ped upper bound                                                                                 
+    plb = drefp.mean()-5*drefp.std()     #ped lower bound                                                                                 
+    cub = drefc.mean()+5*drefc.std()     #car2 upper bound                                                                                
+    clb = drefc.mean()-5*drefc.std()     #car2 lower bound                                                                                
+    TH  = [pub,plb,cub,clb]              #threshold   
+
+
 
 
     L1_var  ={}
@@ -49,6 +68,9 @@ def Tra_Ana(multi):
     env_var ={}
     L1_avg  ={}
     L2_avg  ={}
+    C1 = {} #number of the change pts in region 1 
+    C2 = {} #number of the change pts in region 2
+
 
     nproc  = 1 if not multi else multi
     nfiles = len(imlist)
@@ -57,7 +79,7 @@ def Tra_Ana(multi):
             else nfiles//(nproc-1)
 
 
-    def Tra_Sub_Ana(conn,sub_imlist,sub_imlist2,nstart,ip):
+    def Tra_Sub_Ana(conn,sub_imlist,sub_imlist2,nstart,ip,TH):
 
    
         im1 = np.zeros([H,W,O])
@@ -103,6 +125,9 @@ def Tra_Ana(multi):
             car_cut_R = diff[car[0][1]:car[1][1],car[0][0]:car[1][0],0]
             env_sub_R = diff[:,:,0]
 
+            C1_sub = Pts_Cnt(L1_cut_R.flatten(),TH[0],TH[1])
+            C2_sub = Pts_Cnt(L2_cut_R.flatten(),TH[2],TH[3])
+
 #======================================================================
 
             L1_cut_G  = diff[L1[0][1]:L1[1][1],L1[0][0]:L1[1][0],1]
@@ -136,10 +161,10 @@ def Tra_Ana(multi):
           
         if multi:
             conn.send([L1_sub_var,L2_sub_var,car_sub_var,\
-                       env_sub_var,L1_sub_avg,L2_sub_avg])
+                       env_sub_var,L1_sub_avg,L2_sub_avg,C1_sub,C2_sub])
             conn.close()
         else:
-            return L1_sub_var,L2_sub_var,car_sub_var,env_sub_var,L1_sub_avg,L2_sub_avg    
+            return L1_sub_var,L2_sub_var,car_sub_var,env_sub_var,L1_sub_avg,L2_sub_avg,C1_sub,C2_sub    
 
 
 
@@ -159,13 +184,13 @@ def Tra_Ana(multi):
                                               args=(childs[ip],\
                                               imlist[dind*ip:dind*(ip+1)],\
                                               imlist[dind*ip+1:dind*(ip+1)+1],\
-                                              ip*dind,ip)))
+                                              ip*dind,ip,TH)))
                               
             ps[ip].start()
     
         # -- collect the results, put into cc_mat, and rejoin
         for ip in range(nproc):
-            L1_sub_var,L2_sub_var,car_sub_var,env_sub_var,L1_sub_avg,L2_sub_avg = parents[ip].recv()
+            L1_sub_var,L2_sub_var,car_sub_var,env_sub_var,L1_sub_avg,L2_sub_avg,C1_sub,C2_sub = parents[ip].recv()
                 
             L1_var.update(L1_sub_var)
             L2_var.update(L2_sub_var)
@@ -173,38 +198,46 @@ def Tra_Ana(multi):
             env_var.update(env_sub_var)
             L1_avg.update(L1_sub_avg)
             L2_avg.update(L2_sub_avg)
-                
+            C1.update(C1_sub)
+            C2.update(C2_sub)
+    
 
             ps[ip].join()
             print("DST_REGISTER: process {0} rejoined.".format(ip))
     else:
-        L1_sub_var,L2_sub_var,car_sub_var,env_sub_var,L1_sub_avg,L2_sub_avg = Tra_Sub_Ana(-314,imlist)
+        L1_sub_var,L2_sub_var,car_sub_var,env_sub_var,L1_sub_avg,L2_sub_avg,C1_sub,C2_sub = Tra_Sub_Ana(-314,imlist)
         L1_var.update(L1_sub_var)
         L2_var.update(L2_sub_var)
         car_var.update(car_sub_var)
         env_var.update(env_sub_var)
         L1_avg.update(L1_sub_avg)
         L2_avg.update(L2_sub_avg)
+        C1.update(C1_sub)
+        C2.update(C2_sub)
 
-    return L1_var,L2_var,car_var,env_var,L1_avg,L2_avg  
+    return L1_var,L2_var,car_var,env_var,L1_avg,L2_avg,C1,C2  
 
 
 
 
 def main():
 
-    L1_var,L2_var,car_var,env_var,L1_avg,L2_avg = Tra_Ana(24)
+    L1_var,L2_var,car_var,env_var,L1_avg,L2_avg,C1,C2 = Tra_Ana(24)
  
 #    pickle.dump(L1_var,open("./Feb11/L1_var.pkl","wb"),True)
 #    pickle.dump(L2_var,open("./Feb11/L2_var.pkl","wb"),True)
-    pickle.dump(L1_var,open("./Feb11/ped_var.pkl","wb"),True)
-    pickle.dump(L2_var,open("./Feb11/car2_var.pkl","wb"),True)
-    pickle.dump(car_var,open("./Feb11/car_var.pkl","wb"),True)
-    pickle.dump(env_var,open("./Feb11/env_var.pkl","wb"),True)
+#    pickle.dump(L1_var,open("./Feb11/ped_var.pkl","wb"),True)   # Z crossing
+#    pickle.dump(L2_var,open("./Feb11/car2_var.pkl","wb"),True)  # Car 2
+#    pickle.dump(car_var,open("./Feb11/car_var.pkl","wb"),True)
+#    pickle.dump(env_var,open("./Feb11/env_var.pkl","wb"),True)
 #    pickle.dump(L1_avg,open("./Feb11/L1_avg.pkl","wb"),True)
 #    pickle.dump(L2_avg,open("./Feb11/L2_avg.pkl","wb"),True)
-    pickle.dump(L1_avg,open("./Feb11/ped_avg.pkl","wb"),True)
-    pickle.dump(L2_avg,open("./Feb11/car2_avg.pkl","wb"),True)
+#    pickle.dump(L1_avg,open("./Feb11/ped_avg.pkl","wb"),True)   # Z crossing 
+#    pickle.dump(L2_avg,open("./Feb11/car2_avg.pkl","wb"),True)  # Car 2   
+
+    pickle.dump(C1,open("./Feb11/count1.pkl","wb"),True) 
+    pickle.dump(C2,open("./Feb11/count2.pkl","wb"),True) 
+
 
 
 tic = time.clock()
