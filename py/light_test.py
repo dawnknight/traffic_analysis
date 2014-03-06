@@ -135,13 +135,17 @@ def Move_Idx(RG_idx,lcmax_idx):
 
     return mv_idx  
 
-def Bg_Ana(mtx,sidx,eidx):
+def Bg_Ana(mtx,sidx,eidx,cnt):
     VM = np.zeros(len(sidx))
     for i in arange(len(sidx)):
         s = min(sidx[i],eidx[i]) 
         e = min(max(sidx[i],eidx[i])+1,len(mtx))
+        if s!=e :
 #        VM[i] = mtx[s:e].mean()
-        VM[i] = mtx[s:e].max()
+#        VM[i] = (mtx[s:e].astype(np.float)/cnt[s:e].astype(np.float)).mean()
+            VM[i] = cnt[s:e].max()
+        else:
+            VM[i] = cnt[s].max  
     return VM
 
 def Main():
@@ -162,9 +166,8 @@ def Main():
     env_var = pickle.load(open("./Feb11/ped_var.pkl","rb"))
     L1_avg = pickle.load(open("./Feb11/L1_avg.pkl","rb"))
     L2_avg = pickle.load(open("./Feb11/L2_avg.pkl","rb"))
-
-
-
+    C1 = pickle.load(open("./Feb11/count1.pkl","rb"))
+    C2 = pickle.load(open("./Feb11/count2.pkl","rb"))
 
     L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()),np.asarray(L1_var.values()))
     L2_RG_idx,L2_GR_idx = Trans_Idx(np.asarray(L2_avg.values()),np.asarray(L2_var.values()))
@@ -176,13 +179,17 @@ def Main():
     
 #    env_VAR = nd.gaussian_filter(np.asarray(env_var.values()),3)
     env_VAR = np.asarray(env_var.values())
+    C1_cnt = np.asarray(C1.values())
+    
+
+
     car_VAR = nd.gaussian_filter(np.asarray(car_var.values()),3)
     lcmax_idx_R = Local_Max(car_VAR[::,0])    
 
     react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
 
     # env variance mean
-    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf))
+    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf),C1_cnt[::,0])
      
 
     figure(1,figsize=[7.5,7.5]),
@@ -221,8 +228,8 @@ def Main():
     plt.ylabel('Number of Driver')
     title('Driver Reaction Time')
 
-    figure(7,figsize=[7.5,7.5]),
-    plot(env_VM,react_T/fps,'ro')
+    figure(10,figsize=[7.5,7.5]),
+    plot(log(env_VM),react_T/fps,'ro')
 
     plt.grid(b=1,lw =2)
     plt.xlabel('Variance of background [arb units]')
@@ -230,5 +237,5 @@ def Main():
 #    title('Relation between Driver Reaction Time and background variance')
     title('Relation between Driver Reaction Time and ped variance')
     for i in range(len(env_VM)):
-        plt.text(env_VM[i],react_T[i]/fps,i)
+        plt.text(log(env_VM[i]),react_T[i]/fps,i)
 Main()
