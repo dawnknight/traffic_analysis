@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import mode
 from scipy.interpolate import interp1d
 
-def Rm(idx,var):
+def Rm(idx,var,fps):
     label =[]
     MAX = []
     MAX_idx = []
@@ -19,7 +19,7 @@ def Rm(idx,var):
                 MAX = var[idx[i-1]]
                 MAX_idx = idx[i-1]
                 reset = False
-            if (idx[i]-idx[i-1])<15:
+            if (idx[i]-idx[i-1])<4*fps:
                 if not MAX:
                     if var[idx[i]]>var[idx[i-1]]:
                         MAX = var[idx[i]] 
@@ -42,7 +42,7 @@ def Rm(idx,var):
                     label.append(idx[i])
     return label
 
-def Trans_Idx(mean_mtx,var): # mtx are both a N*3 arrays
+def Trans_Idx(mean_mtx,var,fps): # mtx are both a N*3 arrays
 
     RG = (mean_mtx[::,1]*mean_mtx[::,0])
     GR = (mean_mtx[::,1]*mean_mtx[::,0])                                                  
@@ -53,7 +53,7 @@ def Trans_Idx(mean_mtx,var): # mtx are both a N*3 arrays
     RG_idx = np.array([i for i in range(len(mean_mtx)) if v_RG[i]==True])
     GR_idx = np.array([i for i in range(len(mean_mtx)) if v_GR[i]==True])
     
-    return Rm(RG_idx,var[::,0]),Rm(GR_idx,var[::,0]) 
+    return Rm(RG_idx,var[::,0],fps),Rm(GR_idx,var[::,0],fps) 
 
 def Trans_Var(var_mtx,trans_idx):
     tmp_R = np.zeros(len(var_mtx))
@@ -183,8 +183,8 @@ def Main():
     L2_avg = pickle.load(open("./Mar10/L2_avg.pkl","rb"))
 
 
-    L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()),np.asarray(L1_var.values()))
-    L2_RG_idx,L2_GR_idx = Trans_Idx(np.asarray(L2_avg.values()),np.asarray(L2_var.values()))
+    L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()),np.asarray(L1_var.values()),fps)
+    L2_RG_idx,L2_GR_idx = Trans_Idx(np.asarray(L2_avg.values()),np.asarray(L2_var.values()),fps)
      
     L1_VAR_RG = Trans_Var(np.asarray(L1_var.values()),L1_RG_idx)
     L1_VAR_GR = Trans_Var(np.asarray(L1_var.values()),L1_GR_idx)
@@ -200,11 +200,11 @@ def Main():
     car_VAR = nd.gaussian_filter(np.asarray(car_var.values()),3)
     lcmax_idx_R = Local_Max(car_VAR[::,0])    
 
-    react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
+#    react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
 
     # env variance mean
     #env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf),C1_cnt[::,0])
-    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf)) 
+#    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf)) 
 
     figure(1,figsize=[7.5,7.5]),
 
