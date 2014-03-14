@@ -85,9 +85,7 @@ def React_Time(mv_idx,RG_idx,mv_var,fps,partial=0.2): # mv_var is N*1 vector
     Nsf = np.zeros(len(mv_idx))
     period = np.zeros(len(mv_idx))
     for ii in range(len(mv_idx)):
-        print ii
         val = mv_var[mv_idx[ii]]*partial
-        
         tmp = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]<=val]
         tmpE = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]==val]
         table =arange(max(0,mv_idx[ii]-ck_th),mv_idx[ii])[::-1]
@@ -177,12 +175,12 @@ def Main():
 
 
     fps = 30
-    L1_var = pickle.load(open("./Mar10/L1_var.pkl","rb"))
-    L2_var = pickle.load(open("./Mar10/L2_var.pkl","rb"))
-    car_var = pickle.load(open("./Mar10/car_var.pkl","rb"))
-    env_var = pickle.load(open("./Mar10/env_var.pkl","rb"))
-    L1_avg = pickle.load(open("./Mar10/L1_avg.pkl","rb"))
-    L2_avg = pickle.load(open("./Mar10/L2_avg.pkl","rb"))
+    L1_var = pickle.load(open("./Mar10/angle5/L1_var.pkl","rb"))
+    L2_var = pickle.load(open("./Mar10/angle5/L2_var.pkl","rb"))
+    car_var = pickle.load(open("./Mar10/angle5/car_var.pkl","rb"))
+    env_var = pickle.load(open("./Mar10/angle5/env_var.pkl","rb"))
+    L1_avg = pickle.load(open("./Mar10/angle5/L1_avg.pkl","rb"))
+    L2_avg = pickle.load(open("./Mar10/angle5/L2_avg.pkl","rb"))
 
 
     L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()),np.asarray(L1_var.values()),fps)
@@ -244,7 +242,7 @@ def Main():
     plt.ylabel('Number of Driver')
     title('Driver Reaction Time')
 
-    figure(10,figsize=[7.5,7.5]),
+    figure(5,figsize=[7.5,7.5]),
     plot(log(env_VM),react_T/fps,'ro')
 
     plt.grid(b=1,lw =2)
