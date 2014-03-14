@@ -47,9 +47,9 @@ def Trans_Idx(mean_mtx,var,fps): # mtx are both a N*3 arrays
     RG = (mean_mtx[::,1]*mean_mtx[::,0])
     GR = (mean_mtx[::,1]*mean_mtx[::,0])                                                  
     v_RG = np.r_[mean_mtx[::,1]>0] & np.r_[mean_mtx[::,0]<0] \
-                                   & np.r_[RG<-1]
+                                   & np.r_[RG<-2]
     v_GR = np.r_[mean_mtx[::,1]<0] & np.r_[mean_mtx[::,0]>0] \
-                                   & np.r_[GR<-1]
+                                   & np.r_[GR<-2]
     RG_idx = np.array([i for i in range(len(mean_mtx)) if v_RG[i]==True])
     GR_idx = np.array([i for i in range(len(mean_mtx)) if v_GR[i]==True])
     
@@ -77,13 +77,15 @@ def Local_Max(mtx):  # mtx is N*1 vector
 
     return max_idx
 
-def React_Time(mv_idx,RG_idx,mv_var,partial=0.2,ck_th=50): # mv_var is N*1 vector
+def React_Time(mv_idx,RG_idx,mv_var,fps,partial=0.2): # mv_var is N*1 vector
+    ck_th = fps*13
     mv_idx = np.asarray(mv_idx)    
     mv_var = np.asarray(mv_var)
     RG_idx = np.asarray(RG_idx)
     Nsf = np.zeros(len(mv_idx))
     period = np.zeros(len(mv_idx))
     for ii in range(len(mv_idx)):
+        print ii
         val = mv_var[mv_idx[ii]]*partial
         
         tmp = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]<=val]
@@ -200,11 +202,11 @@ def Main():
     car_VAR = nd.gaussian_filter(np.asarray(car_var.values()),3)
     lcmax_idx_R = Local_Max(car_VAR[::,0])    
 
-#    react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0])
+    react_T,Nsf = React_Time(Move_Idx(L1_RG_idx,lcmax_idx_R),L1_RG_idx,car_VAR[::,0],fps)
 
     # env variance mean
     #env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf),C1_cnt[::,0])
-#    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf)) 
+    env_VM= Bg_Ana(env_VAR[::,0],L1_RG_idx,np.round(Nsf)) 
 
     figure(1,figsize=[7.5,7.5]),
 
