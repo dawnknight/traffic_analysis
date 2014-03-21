@@ -32,16 +32,25 @@ def Pts_Cnt(mtx,ub,lb):
 
 def Tra_Ana(multi):
 
-    path ='/home/andyc/image/Mar10/'
+    path ='/home/andyc/image/Mar10_angle3/'
 #    path ='/home/andyc/image/Feb11/'
 #    path ='/home/andyc/image/Night_frame/'
     imlist = sorted(glob.glob( os.path.join(path, '*.jpg')))    
     
     nrow,ncol,nband = nd.imread(imlist[0]).shape
 
-    L1 = [[422,313],[431,338]] 
-    L2 = [[522,318],[529,338]] 
-    car =[[267,428],[459,577]] 
+#    L1 = [[422,313],[431,338]] #Day 3/10
+#    L2 = [[522,318],[529,338]] #Day 3/10
+#    car =[[267,428],[459,577]] #Day 3/10
+
+    L1 = [[515,302],[527,360]] #Day 3/10 angle3                                                                                     
+    L2 = [[718,359],[726,381]] #Day 3/10 angle3                                                                                     
+    car =[[0,436],[288,533]] #Day 3/10 angle3
+
+
+#    L1 = [[949,189],[951,219]] #Day 3/10 angle5                                                                                          
+#    L2 = [[1116,193],[1122,220]] #Day 3/10 angle5
+#    car =[[94,342],[437,447]] #Day 3/10 angle5
 
 #    L1 = [[723,310],[738,345]]    #Day 2/11
 #    L2 = [[1185,267],[1197,303]]  #Day 2/11
@@ -217,12 +226,12 @@ def main():
 #    pickle.dump(C1,open("./Feb11/count1.pkl","wb"),True) 
 #    pickle.dump(C2,open("./Feb11/count2.pkl","wb"),True) 
 
-    pickle.dump(L1_var,open("./Mar10/L1_var.pkl","wb"),True)                                                                            
-    pickle.dump(L2_var,open("./Mar10/L2_var.pkl","wb"),True)                                                                            
-    pickle.dump(car_var,open("./Mar10/car_var.pkl","wb"),True)
-    pickle.dump(env_var,open("./Mar10/env_var.pkl","wb"),True)
-    pickle.dump(L1_avg,open("./Mar10/L1_avg.pkl","wb"),True)
-    pickle.dump(L2_avg,open("./Mar10/L2_avg.pkl","wb"),True)
+    pickle.dump(L1_var,open("./Mar10/angle3/L1_var.pkl","wb"),True)                                                                 
+    pickle.dump(L2_var,open("./Mar10/angle3/L2_var.pkl","wb"),True)                                                                 
+    pickle.dump(car_var,open("./Mar10/angle3/car_var.pkl","wb"),True)
+    pickle.dump(env_var,open("./Mar10/angle3/env_var.pkl","wb"),True)
+    pickle.dump(L1_avg,open("./Mar10/angle3/L1_avg.pkl","wb"),True)
+    pickle.dump(L2_avg,open("./Mar10/angle3/L2_avg.pkl","wb"),True)
     
 
 
