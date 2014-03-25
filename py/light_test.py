@@ -85,6 +85,7 @@ def React_Time(mv_idx,RG_idx,mv_var,fps,partial=0.2): # mv_var is N*1 vector
     Nsf = np.zeros(len(mv_idx))
     period = np.zeros(len(mv_idx))
     for ii in range(len(mv_idx)):
+        print ii
         val = mv_var[mv_idx[ii]]*partial
         tmp = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]<=val]
         tmpE = np.r_[mv_var[max(0,mv_idx[ii]-ck_th):mv_idx[ii]][::-1]==val]
@@ -95,8 +96,9 @@ def React_Time(mv_idx,RG_idx,mv_var,fps,partial=0.2): # mv_var is N*1 vector
             period[ii] = Nsf[ii] - RG_idx[ii]
         else :
             if True in tmp:               
-                LB = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]         
-                RB = LB+1
+                LB = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]
+                RB = [table[i] for i in range(len(tmp)) if tmp[i]==False][0]         
+                #RB = LB+1
                 Nsf[ii] = interp1d([mv_var[LB],mv_var[RB]],[LB,RB])(val) 
                 period[ii] = Nsf[ii] - RG_idx[ii]                        
             else:
@@ -109,7 +111,8 @@ def React_Time(mv_idx,RG_idx,mv_var,fps,partial=0.2): # mv_var is N*1 vector
                     period[ii] = Nsf[ii] - RG_idx[ii]                      
                 else :
                     LB = [table[i] for i in range(len(tmp)) if tmp[i]==True][0]
-                    RB = LB+1
+                    #RB = LB+1
+                    RB = [table[i] for i in range(len(tmp)) if tmp[i]==False][0]
                     Nsf[ii] = interp1d([mv_var[LB],mv_var[RB]],[LB,RB])(num)
                     period[ii] = Nsf[ii] - RG_idx[ii]
                 print("At {0}: original {1} is too small".format(RG_idx[ii],val))
@@ -175,12 +178,12 @@ def Main():
 
 
     fps = 30
-    L1_var = pickle.load(open("./Mar10/angle5/L1_var.pkl","rb"))
-    L2_var = pickle.load(open("./Mar10/angle5/L2_var.pkl","rb"))
-    car_var = pickle.load(open("./Mar10/angle5/car_var.pkl","rb"))
-    env_var = pickle.load(open("./Mar10/angle5/env_var.pkl","rb"))
-    L1_avg = pickle.load(open("./Mar10/angle5/L1_avg.pkl","rb"))
-    L2_avg = pickle.load(open("./Mar10/angle5/L2_avg.pkl","rb"))
+    L1_var = pickle.load(open("./Mar10/angle1/L1_var.pkl","rb"))
+    L2_var = pickle.load(open("./Mar10/angle1/L2_var.pkl","rb"))
+    car_var = pickle.load(open("./Mar10/angle1/car_var.pkl","rb"))
+    env_var = pickle.load(open("./Mar10/angle1/bike_var.pkl","rb"))
+    L1_avg = pickle.load(open("./Mar10/angle1/L1_avg.pkl","rb"))
+    L2_avg = pickle.load(open("./Mar10/angle1/L2_avg.pkl","rb"))
 
 
     L1_RG_idx,L1_GR_idx = Trans_Idx(np.asarray(L1_avg.values()),np.asarray(L1_var.values()),fps)
