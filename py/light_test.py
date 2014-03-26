@@ -7,6 +7,8 @@ from scipy.stats import mode
 from scipy.interpolate import interp1d
 
 def Rm(idx,var,fps):
+    label = idx
+    '''
     label =[]
     MAX = []
     MAX_idx = []
@@ -40,10 +42,11 @@ def Rm(idx,var,fps):
                 reset = True  
                 if i == len(idx)-1:
                     label.append(idx[i])
+    '''
     return label
 
 def Trans_Idx(mean_mtx,var,fps): # mtx are both a N*3 arrays
-
+    
     RG = (mean_mtx[::,1]*mean_mtx[::,0])
     GR = (mean_mtx[::,1]*mean_mtx[::,0])                                                  
     v_RG = np.r_[mean_mtx[::,1]>0] & np.r_[mean_mtx[::,0]<0] \
@@ -181,7 +184,7 @@ def Main():
     L1_var = pickle.load(open("./Mar10/angle1/L1_var.pkl","rb"))
     L2_var = pickle.load(open("./Mar10/angle1/L2_var.pkl","rb"))
     car_var = pickle.load(open("./Mar10/angle1/car_var.pkl","rb"))
-    env_var = pickle.load(open("./Mar10/angle1/bike_var.pkl","rb"))
+    env_var = pickle.load(open("./Mar10/angle1/env_var.pkl","rb"))
     L1_avg = pickle.load(open("./Mar10/angle1/L1_avg.pkl","rb"))
     L2_avg = pickle.load(open("./Mar10/angle1/L2_avg.pkl","rb"))
 
@@ -211,8 +214,12 @@ def Main():
 
     figure(1,figsize=[7.5,7.5]),
 
-    plot(range(len(L1_var)),L1_VAR_RG[::,0],color = '#990000',lw=2)
-    plot(range(len(L1_var)),L2_VAR_RG[::,0]/3, color = '#006600',lw=2)
+#    plot(range(len(L1_var)),L1_VAR_RG[::,0],color = '#990000',lw=2)
+#    plot(range(len(L1_var)),L2_VAR_RG[::,0]/3, color = '#006600',lw=2)
+
+    plot(range(len(L1_var)),np.asarray(L1_var.values())[::,0],color = '#990000',lw=2)
+    plot(range(len(L2_var)),np.asarray(L2_var.values())[::,0],color = '#006600',lw=2)
+
     fill_between(range(len(L1_var)),car_VAR[::,0]/2,facecolor = '#0099FF',edgecolor='#0000FF')
 
     plt.grid(b=1,lw =2)
