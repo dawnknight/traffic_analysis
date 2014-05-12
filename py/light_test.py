@@ -7,8 +7,8 @@ from scipy.stats import mode
 from scipy.interpolate import interp1d
 
 def Rm(idx,var,fps):
-    label = idx
-    '''
+#    label = idx
+#    '''
     label =[]
     MAX = []
     MAX_idx = []
@@ -42,7 +42,7 @@ def Rm(idx,var,fps):
                 reset = True  
                 if i == len(idx)-1:
                     label.append(idx[i])
-    '''
+ #   '''
     return label
 
 def Trans_Idx(mean_mtx,var,fps): # mtx are both a N*3 arrays
@@ -214,11 +214,11 @@ def Main():
 
     figure(1,figsize=[7.5,7.5]),
 
-#    plot(range(len(L1_var)),L1_VAR_RG[::,0],color = '#990000',lw=2)
-#    plot(range(len(L1_var)),L2_VAR_RG[::,0]/3, color = '#006600',lw=2)
+    plot(range(len(L1_var)),L1_VAR_RG[::,0],color = '#990000',lw=2)
+    plot(range(len(L1_var)),L2_VAR_RG[::,0], color = '#006600',lw=2)
 
-    plot(range(len(L1_var)),np.asarray(L1_var.values())[::,0],color = '#990000',lw=2)
-    plot(range(len(L2_var)),np.asarray(L2_var.values())[::,0],color = '#006600',lw=2)
+#    plot(range(len(L1_var)),np.asarray(L1_var.values())[::,0],color = '#990000',lw=2)
+#    plot(range(len(L2_var)),np.asarray(L2_var.values())[::,0],color = '#006600',lw=2)
 
     fill_between(range(len(L1_var)),car_VAR[::,0]/2,facecolor = '#0099FF',edgecolor='#0000FF')
 
